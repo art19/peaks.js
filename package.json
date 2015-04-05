@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "eventemitter2": "^0.4.14",
-    "kinetic": "^5.0.6",
+    "kinetic": "art19/KineticJS",
     "waveform-data": "^1.4.3"
   },
   "optionalDependencies": {
