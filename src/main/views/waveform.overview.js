@@ -160,7 +160,7 @@ define([
 
   /*WaveformOverview.prototype.updateWaveform = function () {
     var that = this;
-    that.waveformShape.setDrawFunc(function(canvas) {
+    that.waveformShape.sceneFunc(function(canvas) {
       mixins.waveformDrawFunction.call(this, that.data, canvas, mixins.interpolateHeight(that.height));
     });
     that.waveformLayer.draw();
@@ -172,7 +172,7 @@ define([
     var offset_in = that.data.at_time(time_in);
     var offset_out = that.data.at_time(time_out);
 
-    that.refWaveformShape.setDrawFunc(function(canvas) {
+    that.refWaveformShape.sceneFunc(function(canvas) {
       that.data.set_segment(offset_in, offset_out, "zoom");
 
       mixins.waveformOffsetDrawFunction.call(this, that.data, canvas, mixins.interpolateHeight(that.height));
