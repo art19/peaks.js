@@ -26,7 +26,7 @@ define([
       opacity: 1
     });
 
-    shape.setDrawFunc(WaveShape.drawFunc.bind(shape, view, segmentData.id));
+    shape.sceneFunc(WaveShape.drawFunc.bind(shape, view, segmentData.id));
 
     return shape;
   };
