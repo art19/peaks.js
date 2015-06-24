@@ -15,7 +15,6 @@
   },
   "browser": {
     "EventEmitter": "eventemitter2",
-    "Kinetic": "kinetic",
     "peaks/player/player": "./src/main/player/player.js",
     "peaks/player/player.keyboard": "./src/main/player/player.keyboard.js",
     "peaks/waveform/waveform.axis": "./src/main/waveform/waveform.axis.js",
@@ -65,7 +64,7 @@
   },
   "dependencies": {
     "eventemitter2": "^0.4.14",
-    "kinetic": "art19/KineticJS",
+    "konva": "~0.9.5",
     "waveform-data": "^1.4.3"
   },
   "optionalDependencies": {
