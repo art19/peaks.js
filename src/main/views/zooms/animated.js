@@ -92,6 +92,7 @@ define(["konva"], function (Konva) {
         }
         else {
           this.stop();
+          that.intermediateData = null;
           that.segmentLayer.setVisible(true);
           that.pointLayer.setVisible(true);
           that.seekFrame(that.data.at_time(that.peaks.time.getCurrentTime()));
