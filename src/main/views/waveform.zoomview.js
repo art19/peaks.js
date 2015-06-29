@@ -144,8 +144,15 @@ define([
           scale: current_scale
         });
 
-        var animation = ZoomAnimation.init(current_scale, previous_scale, that);
-        animation.start();
+        if (that.peaks.options.zoomAnimationEnabled) {
+          var animation = ZoomAnimation.init(current_scale, previous_scale, that);
+          animation.start();
+        } else {
+          that.segmentLayer.draw();
+          that.pointLayer.draw();
+
+          that.seekFrame(that.data.at_time(that.peaks.time.getCurrentTime()));
+        }
       }
     });
 
@@ -222,9 +229,25 @@ define([
 
     var that = this;
 
-    that.frameOffset = pixelOffset;
     that.pixelLength = that.data.adapter.length;
-    that.data.offset(pixelOffset, pixelOffset + that.width);
+
+    // total waveform is shorter than viewport, so reset the offset to 0
+    if (that.pixelLength < that.width) {
+      pixelOffset = 0;
+    }
+
+    // new position is beyond the size of the waveform, so set it to the very last possible position
+    if (pixelOffset > that.pixelLength) {
+      pixelOffset = that.pixelLength - that.width;
+    }
+
+    // we must not have a negative pixelOffset
+    if (pixelOffset < 0) {
+      pixelOffset = 0;
+    }
+
+    that.frameOffset = pixelOffset;
+    that.data.offset(pixelOffset, Math.min(pixelOffset + that.width, that.pixelLength));
 
     var display = (that.playheadPixel >= pixelOffset) && (that.playheadPixel <= pixelOffset + that.width); //i.e. playhead is within the zoom frame width
 
