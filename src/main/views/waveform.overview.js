@@ -125,13 +125,18 @@ define([
       strokeWidth: 0
     });*/
 
+    var refPadding = this.options.refWaveformRectPadding;
+    if (refPadding * 2 > this.height) {
+      refPadding = 0;
+    }
+
     this.refWaveformRect = new Kinetic.Rect({
       x: 0,
-      y: 11,
+      y: refPadding,
       width: 0,
       stroke: "grey",
       strokeWidth: 1,
-      height: this.height - (11*2),
+      height: this.height - (refPadding * 2),
       fill: 'grey',
       opacity: 0.3,
       cornerRadius: 2
