@@ -194,6 +194,9 @@ var options = {
   // Colour of the axis labels
   axisLabelColor: '#aaa',
 
+  // Use an axis on the following waveforms: 'overview', 'zoomview'
+  axisOnWaveforms: ['overview', 'zoomview'],
+
   // Random colour per segment (overrides segmentColor)
   randomizeSegmentColor: true,
 
