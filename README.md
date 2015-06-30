@@ -182,6 +182,12 @@ var options = {
   // Colour for the overview waveform
   overviewWaveformColor: 'rgba(0,0,0,0.2)',
 
+  // Vertical padding in pixel to add to the overview waveform highlight rectangle. Defaults to 11px
+  overviewHighlightRectanglePadding: 11,
+
+  // Opacity of the overview waveform highlight rectangle. Defaults to 0.3
+  overviewHighlightRectangleOpacity: 0.3,
+
   // Colour for segments on the waveform
   segmentColor: 'rgba(255, 161, 39, 1)',
 
@@ -205,10 +211,6 @@ var options = {
 
   // Random colour per segment (overrides segmentColor)
   randomizeSegmentColor: true,
-
-  // Vertical padding in pixel to add to the waveform reference rectangle. Defaults to 11px. You might want to adjust this
-  // depending on whether an axis is enabled in the overview waveform or not.
-  refWaveformRectPadding: 11,
 
   // Array of initial segment objects with startTime and
   // endTime in seconds and a boolean for editable.
