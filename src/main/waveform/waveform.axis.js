@@ -26,8 +26,11 @@ define(["peaks/waveform/waveform.mixins", "Kinetic"], function (mixins, Kinetic)
     }
   }
 
-  function WaveformAxis(view) {
+  function WaveformAxis(view, viewOptions) {
     this.view = view; // store reference to waveform view object
+    if (viewOptions === undefined || viewOptions === null) {
+      viewOptions = {};
+    }
 
     this.axisShape = new Kinetic.Shape({
       fill: 'rgba(38, 255, 161, 1)',
@@ -35,7 +38,7 @@ define(["peaks/waveform/waveform.mixins", "Kinetic"], function (mixins, Kinetic)
       opacity: 1
     });
 
-    this.axisShape.setDrawFunc(this.axisDrawFunction.bind(this, view));
+    this.axisShape.setDrawFunc(this.axisDrawFunction.bind(this, view, viewOptions));
 
     this.view.uiLayer.add(this.axisShape);
   }
@@ -74,11 +77,13 @@ define(["peaks/waveform/waveform.mixins", "Kinetic"], function (mixins, Kinetic)
 
 
   /**
-   *
    * @param {WaveformOverview|WaveformZoomview} view
    * @param {Kinetic.Context} context
+   * @param {Object} [viewOptions] configuration options
+   * @param {String} [viewOptions.axisGridlineColor] color code to use for the grid lines
+   * @param {String} [viewOptions.axisLabelColor] color code to use for labels
    */
-  WaveformAxis.prototype.axisDrawFunction = function (view, context) {
+  WaveformAxis.prototype.axisDrawFunction = function (view, viewOptions, context) {
     var currentFrameStartTime = view.data.time(view.frameOffset);
 
     // Draw axis markers
@@ -95,13 +100,15 @@ define(["peaks/waveform/waveform.mixins", "Kinetic"], function (mixins, Kinetic)
 
     // Distance between waveform start time and first axis marker (pixels)
     var axisLabelOffsetPixels = this.view.data.at_time(axisLabelOffsetSecs);
+    var axisGridlineColor = viewOptions.axisGridlineColor || this.view.options.axisGridlineColor;
+    var axisLabelColor = viewOptions.axisLabelColor || this.view.options.axisLabelColor;
 
-    context.setAttr('strokeStyle', this.view.options.axisGridlineColor);
+    context.setAttr('strokeStyle', axisGridlineColor);
     context.setAttr('lineWidth', 1);
 
     // Set text style
     context.setAttr('font', "11px sans-serif");
-    context.setAttr('fillStyle', this.view.options.axisLabelColor);
+    context.setAttr('fillStyle', axisLabelColor);
     context.setAttr('textAlign', "left");
     context.setAttr('textBaseline', "bottom");
 
