@@ -184,7 +184,7 @@ define('peaks', [
       /**
        * Use animation on zoom
        */
-      zoomAdapter: 'AnimatedZoomAdapter',
+      zoomAdapter: 'animated',
     };
 
     /**
