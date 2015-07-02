@@ -197,6 +197,10 @@ var options = {
   // Random colour per segment (overrides segmentColor)
   randomizeSegmentColor: true,
 
+  // Show marker lines for uneditable segments and points on the following waveforms: 'overview', 'zoomview'.
+  // Default is none of them.
+  showMarkerLinesWhenUneditable: [],
+
   // Array of initial segment objects with startTime and
   // endTime in seconds and a boolean for editable.
   // See below.
