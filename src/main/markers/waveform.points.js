@@ -30,7 +30,6 @@ define([
       var pointOverviewGroup = new Konva.Group();
       var pointGroups = [ { group: pointZoomGroup, view: 'zoomview' }, { group: pointOverviewGroup, view: 'overview' }];
 
-
       point.editable = Boolean(point.editable);
 
       pointGroups.forEach(function(item, i){

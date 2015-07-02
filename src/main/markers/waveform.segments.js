@@ -117,7 +117,6 @@ define([
       // segment.overview.label.setX(overviewStartOffset);
 
       SegmentShape.update.call(segment.overview.waveformShape, peaks.waveform.waveformOverview, segment.id);
-      segment.overview.view.segmentLayer.draw();
 
       // Zoom
       var zoomStartOffset = peaks.waveform.waveformZoomView.data.at_time(segment.startTime);
@@ -148,9 +147,6 @@ define([
         }
 
         SegmentShape.update.call(segment.zoom.waveformShape, peaks.waveform.waveformZoomView, segment.id);
-
-        segment.zoom.view.segmentLayer.draw();
-
       } else {
         segment.zoom.hide();
       }
@@ -168,7 +164,8 @@ define([
       }
 
       updateSegmentWaveform(segment);
-    };
+      this.render();
+    }.bind(this);
 
     var getSegmentColor = function () {
       var c;

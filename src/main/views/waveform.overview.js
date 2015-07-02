@@ -129,6 +129,7 @@ define([
     if (refPadding * 2 > this.height) {
       refPadding = 0;
     }
+
     this.refWaveformRect = new Konva.Rect({
       x: 0,
       y: refPadding,

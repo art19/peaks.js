@@ -78,10 +78,10 @@ define(["peaks/waveform/waveform.mixins", "konva"], function (mixins, Konva) {
 
   /**
    * @param {WaveformOverview|WaveformZoomview} view
-   * @param {Konva.Context} context
    * @param {Object} [viewOptions] configuration options
    * @param {String} [viewOptions.axisGridlineColor] color code to use for the grid lines
    * @param {String} [viewOptions.axisLabelColor] color code to use for labels
+   * @param {Konva.Context} context
    */
   WaveformAxis.prototype.axisDrawFunction = function (view, viewOptions, context) {
     var currentFrameStartTime = view.data.time(view.frameOffset);
