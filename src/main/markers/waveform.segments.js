@@ -213,10 +213,9 @@ define([
         throw new RangeError("[waveform.segments.createSegment] endTime should be higher than startTime");
       }
 
-      var matchesSegmentId = function(item, index, arr) {
-        item.id === segmentId;
-      }
-      if (self.segments.some(matchesSegmentId)) {
+      if (self.segments.some(function(item, index, arr) {
+        return (item.id === segmentId);
+      })) {
         throw new TypeError("[waveform.segments.createSegment] segmentId is already in use");
       }
 
