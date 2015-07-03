@@ -337,6 +337,13 @@ define('peaks', [
           addSegment: addSegment,
           add:        addSegment,
 
+          /**
+           * Remove a given segment
+           *
+           * @param segment {Object} The segment to be removed
+           * @return {Object} The last removed segment
+           * @throws {RangeError} If the segment is not found
+           */
           remove: function (segment) {
             var index = self.waveform.segments.remove(segment);
 
@@ -349,6 +356,21 @@ define('peaks', [
             return self.waveform.segments.segments.splice(index, 1).pop();
           },
 
+          /**
+           * Update all segments and refresh the waveforms.
+           */
+          updateSegments: function() {
+            self.waveform.segments.updateSegments();
+          },
+
+          /**
+           * Remove a segment by start-time, and if provided end-time. It refreshes the waveforms after removal.
+           *
+           * @param startTime {Number} start-time of the segment to be removed
+           * @param [endTime] {Number} optional end-time. If provided, the segment to be removed must match both start- and end-time.
+           *
+           * @return {Number} Number of segments removed.
+           */
           removeByTime: function (startTime, endTime) {
             endTime = (typeof endTime === 'number') ? endTime : 0;
             var fnFilter;
@@ -385,10 +407,18 @@ define('peaks', [
             return indexes.length;
           },
 
+          /**
+           * Remove all segments
+           */
           removeAll: function () {
             self.waveform.segments.removeAll();
           },
 
+          /**
+           * Get a list of current segments
+           *
+           * @return {Array} List of segments
+           */
           getSegments: function () {
             return self.waveform.segments.segments;
           }
