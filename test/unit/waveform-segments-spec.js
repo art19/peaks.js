@@ -31,7 +31,7 @@ define(['peaks'], function(Peaks){
         p.segments.addSegment(0, 10, false);
 
         expect(stub.callCount).to.equal(1);
-        expect(stub.args[0]).to.deep.equal([0, 10, false, undefined, undefined]);
+        expect(stub.args[0]).to.deep.equal([0, 10, false, undefined, undefined, undefined]);
       });
 
       it("should accept an array of Segment objects", function(){
@@ -43,7 +43,7 @@ define(['peaks'], function(Peaks){
         ]);
 
         expect(spy.callCount).to.equal(2);
-        expect(spy.args[1]).to.deep.equal([10, 20, true, 'rgba(255, 161, 39, 1)', 'dummy text']);
+        expect(spy.args[1]).to.deep.equal([10, 20, true, 'rgba(255, 161, 39, 1)', 'dummy text', undefined]);
       });
 
       it("should paint once, and not after each segment addition", function(){

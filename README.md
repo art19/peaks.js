@@ -194,6 +194,12 @@ var options = {
   // Colour for segments on the waveform
   segmentColor: 'rgba(255, 161, 39, 1)',
 
+  // Callback when a segment handle has been dragged
+  segmentDragEndHandler: null,
+
+  // Callback when a segment handle has been double clicked
+  segmentDblClickHandler: null,
+
   // Colour of the play head
   playheadColor: 'rgba(0, 0, 0, 1)',
 
@@ -223,6 +229,9 @@ var options = {
 
   // Zoom view adapter to use. Valid adapters are: 'animated' (default) and 'static'
   zoomAdapter: 'animated',
+
+  // Move the zoomview when dragging. Defaults to true.
+  moveZoomWaveOnDrag: true
 
   // Show marker lines for uneditable segments and points on the following waveforms: 'overview', 'zoomview'.
   // Default is none of them.

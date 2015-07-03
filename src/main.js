@@ -123,6 +123,15 @@ define('peaks', [
        */
       segmentColor:          'rgba(255, 161, 39, 1)',
       /**
+       * Callback when a segment handle has been dragged
+       */
+      segmentDragEndHandler: null,
+      /**
+       * Callback when a segment handle has been double clicked
+       */
+      segmentDblClickHandler: null,
+
+      /**
        * Colour of the play head
        */
       playheadColor:         'rgba(0, 0, 0, 1)',
@@ -165,8 +174,8 @@ define('peaks', [
       /**
        * Related to points
        */
-      pointMarkerColor:     '#FF0000', //Color for the point marker
-      pointDblClickHandler: null, //Handler called when point handle double clicked.
+      pointMarkerColor:     '#FF0000', // Color for the point marker
+      pointDblClickHandler: null, // Handler called when point handle double clicked.
       pointDragEndHandler:  null, // Called when the point handle has finished dragging
 
       /**
@@ -191,6 +200,11 @@ define('peaks', [
        * Use animation on zoom
        */
       zoomAdapter: 'animated',
+
+      /**
+       * Move the zoomview when dragging. Defaults to true.
+       */
+      moveZoomWaveOnDrag: true
     };
 
     /**
@@ -312,7 +326,17 @@ define('peaks', [
       get: function () {
         var self = this;
 
-        function addSegment (startTime, endTime, editable, color, labelText) {
+        /**
+         * Add a new segment by either providing a list of attributes or an array of segment objects.
+         *
+         * @param startTime {Number}   start time of the segment
+         * @param endTime {Number}     end time of the segment
+         * @param editable {Boolean}   if true, the segment edges can be dragged to change the segment
+         * @param [color] {String}     optional color code to use for the segment. If none is provided we'll get you one.
+         * @param [labelText] {String} optional text to attach as label to the segment
+         * @param [segmentId] {String} optional ID to use for the segment. If none is provided it will be assigned one.
+         */
+        function addSegment (startTime, endTime, editable, color, labelText, segmentId) {
           var segments = arguments[0];
 
           if (typeof segments === "number") {
@@ -322,14 +346,15 @@ define('peaks', [
                 endTime:   endTime,
                 editable:  editable,
                 color:     color,
-                labelText: labelText
+                labelText: labelText,
+                id:        segmentId
               }
             ];
           }
 
           if (Array.isArray(segments)) {
             segments.forEach(function (segment) {
-              self.waveform.segments.createSegment(segment.startTime, segment.endTime, segment.editable, segment.color, segment.labelText);
+              self.waveform.segments.createSegment(segment.startTime, segment.endTime, segment.editable, segment.color, segment.labelText, segment.id);
             });
 
             self.waveform.segments.render();
@@ -343,6 +368,13 @@ define('peaks', [
           addSegment: addSegment,
           add:        addSegment,
 
+          /**
+           * Remove a given segment
+           *
+           * @param segment {Object} The segment to be removed
+           * @return {Object} The last removed segment
+           * @throws {RangeError} If the segment is not found
+           */
           remove: function (segment) {
             var index = self.waveform.segments.remove(segment);
 
@@ -355,6 +387,21 @@ define('peaks', [
             return self.waveform.segments.segments.splice(index, 1).pop();
           },
 
+          /**
+           * Update all segments and refresh the waveforms.
+           */
+          updateSegments: function() {
+            self.waveform.segments.updateSegments();
+          },
+
+          /**
+           * Remove a segment by start-time, and if provided end-time. It refreshes the waveforms after removal.
+           *
+           * @param startTime {Number} start-time of the segment to be removed
+           * @param [endTime] {Number} optional end-time. If provided, the segment to be removed must match both start- and end-time.
+           *
+           * @return {Number} Number of segments removed.
+           */
           removeByTime: function (startTime, endTime) {
             endTime = (typeof endTime === 'number') ? endTime : 0;
             var fnFilter;
@@ -391,10 +438,18 @@ define('peaks', [
             return indexes.length;
           },
 
+          /**
+           * Remove all segments
+           */
           removeAll: function () {
             self.waveform.segments.removeAll();
           },
 
+          /**
+           * Get a list of current segments
+           *
+           * @return {Array} List of segments
+           */
           getSegments: function () {
             return self.waveform.segments.segments;
           }
