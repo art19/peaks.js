@@ -193,10 +193,13 @@ define([
      * @param {Boolean} editable
      * @param {String=} color
      * @param {String=} labelText
+     * @param {String=} segment ID. Will be generated if undefined
      * @return {Object}
      */
-    this.createSegment = function (startTime, endTime, editable, color, labelText) {
-      var segmentId = "segment" + self.segments.length;
+    this.createSegment = function (startTime, endTime, editable, color, labelText, segmentId) {
+      if (segmentId === undefined) {
+        segmentId = "segment" + self.segments.length;
+      }
 
       if ((startTime >= 0) === false){
         throw new TypeError("[waveform.segments.createSegment] startTime should be a positive value");
@@ -208,6 +211,13 @@ define([
 
       if ((endTime > startTime) === false){
         throw new RangeError("[waveform.segments.createSegment] endTime should be higher than startTime");
+      }
+
+      var matchesSegmentId = function(item, index, arr) {
+        item.id === segmentId;
+      }
+      if (self.segments.some(matchesSegmentId)) {
+        throw new TypeError("[waveform.segments.createSegment] segmentId is already in use");
       }
 
       var segment = createSegmentWaveform(segmentId, startTime, endTime, editable, color, labelText);

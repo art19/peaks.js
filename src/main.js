@@ -286,7 +286,17 @@ define('peaks', [
       get: function () {
         var self = this;
 
-        function addSegment (startTime, endTime, editable, color, labelText) {
+        /**
+         * Add a new segment by either providing a list of attributes or an array of segment objects.
+         *
+         * @param startTime {Number}   start time of the segment
+         * @param endTime {Number}     end time of the segment
+         * @param editable {Boolean}   if true, the segment edges can be dragged to change the segment
+         * @param [color] {String}     optional color code to use for the segment. If none is provided we'll get you one.
+         * @param [labelText] {String} optional text to attach as label to the segment
+         * @param [segmentId] {String} optional ID to use for the segment. If none is provided it will be assigned one.
+         */
+        function addSegment (startTime, endTime, editable, color, labelText, segmentId) {
           var segments = arguments[0];
 
           if (typeof segments === "number") {
@@ -296,14 +306,15 @@ define('peaks', [
                 endTime:   endTime,
                 editable:  editable,
                 color:     color,
-                labelText: labelText
+                labelText: labelText,
+                id:        segmentId
               }
             ];
           }
 
           if (Array.isArray(segments)) {
             segments.forEach(function (segment) {
-              self.waveform.segments.createSegment(segment.startTime, segment.endTime, segment.editable, segment.color, segment.labelText);
+              self.waveform.segments.createSegment(segment.startTime, segment.endTime, segment.editable, segment.color, segment.labelText, segment.id);
             });
 
             self.waveform.segments.render();
