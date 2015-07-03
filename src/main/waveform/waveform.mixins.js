@@ -19,13 +19,15 @@ define(['konva'], function (Konva) {
   var createHandle = function (height, color, inMarker) {
 
     /**
-     * @param  {Boolean}  draggable If true, marker is draggable
-     * @param  {Object}   segment   Parent segment object with in and out times
-     * @param  {Object}   parent    Parent context
-     * @param  {Function} onDrag    Callback after drag completed
-     * @return {Konva Object}     Konva group object of handle marker elements
+     * @param  {Boolean}  draggable  If true, marker is draggable
+     * @param  {Object}   segment    Parent segment object with in and out times
+     * @param  {Object}   parent     Parent context
+     * @param  {Function} onDrag     Callback upon dragging
+     * @param  {Function} onDblClick Callback after a double click
+     * @param  {Function} onDragEnd  Callback after drag completed
+     * @return {Konva Object}        Konva group object of handle marker elements
      */
-    return function (draggable, segment, parent, onDrag) {
+    return function (draggable, segment, parent, onDrag, onDblClick, onDragEnd) {
       var handleHeight = 20;
       var handleWidth = handleHeight / 2;
       var handleY = (height / 2) - 10.5;
@@ -53,6 +55,18 @@ define(['konva'], function (Konva) {
       }).on("dragmove", function (event) {
         onDrag(segment, parent);
       });
+
+      if (typeof(onDblClick) === 'function') {
+        group.on('dblclick', function (event) {
+          onDblClick(parent);
+        });
+      }
+
+      if (typeof(onDragEnd) === 'function') {
+        group.on('dragend', function (event) {
+          onDragEnd(parent);
+        });
+      }
 
       var xPosition = inMarker ? -24 : 24;
 
@@ -323,7 +337,7 @@ define(['konva'], function (Konva) {
      * @return {Function} Provides Konva handle group on execution
      */
     defaultInMarker: function (options) {
-      return createHandle(options.height, options.outMarkerColor, true);
+      return createHandle(options.height, options.inMarkerColor, true);
     },
 
     /**

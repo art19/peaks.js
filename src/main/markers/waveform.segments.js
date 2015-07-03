@@ -66,10 +66,10 @@ define([
         if (editable) {
           var draggable = true;
 
-          segmentGroup.inMarker = new peaks.options.segmentInMarker(draggable, segmentGroup, segment, segmentHandleDrag);
+          segmentGroup.inMarker = new peaks.options.segmentInMarker(draggable, segmentGroup, segment, segmentHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
           segmentGroup.add(segmentGroup.inMarker);
 
-          segmentGroup.outMarker = new peaks.options.segmentOutMarker(draggable, segmentGroup, segment, segmentHandleDrag);
+          segmentGroup.outMarker = new peaks.options.segmentOutMarker(draggable, segmentGroup, segment, segmentHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
           segmentGroup.add(segmentGroup.outMarker);
         }
 

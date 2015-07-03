@@ -188,6 +188,12 @@ var options = {
   // Colour for segments on the waveform
   segmentColor: 'rgba(255, 161, 39, 1)',
 
+  // Callback when a segment handle has been dragged
+  segmentDragEndHandler: null,
+
+  // Callback when a segment handle has been double clicked
+  segmentDblClickHandler: null,
+
   // Colour of the play head
   playheadColor: 'rgba(0, 0, 0, 1)',
 
