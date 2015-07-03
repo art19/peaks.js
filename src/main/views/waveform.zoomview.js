@@ -69,11 +69,17 @@ define([
         !event.target.attrs.draggable &&
         !event.target.parent.attrs.draggable) {
         if (event.type === "mousedown") {
-          var x = event.evt.layerX, dX, p;
+          var x = event.evt.layerX, dX, p, startPosition, startTime, dragId;
+
           peaks.seeking = true;
+
+          startPosition = that.frameOffset + x;
+          startTime = that.data.time(startPosition);
+          dragId = new Date().getTime();
 
           // enable drag if necessary
           that.stage.on("mousemove", function (event) {
+            var drag_event = peaks.seeking ? 'user_drag.zoomview.start' : 'user_drag.zoomview.dragging';
             peaks.seeking = false;
 
             dX = event.evt.layerX > x ? x - event.evt.layerX : (x - event.evt.layerX)*1;
@@ -81,13 +87,24 @@ define([
             p = that.frameOffset+dX;
             p = p < 0 ? 0 : p > (that.pixelLength - that.width) ? (that.pixelLength - that.width) : p;
 
-            that.updateZoomWaveform(p);
+            currentPosition = Math.min(that.frameOffset + x, that.pixelLength);
+            stopTime = that.data.time(currentPosition);
+            that.peaks.emit(drag_event, startPosition, currentPosition, startTime, stopTime, dragId);
+
+            if (that.peaks.options.moveZoomWaveOnDrag) {
+              that.updateZoomWaveform(p);
+            }
           });
 
-          that.stage.on("mouseup", function () {
-            if (peaks.seeking){
+          that.stage.on("mouseup", function (event) {
+            if (peaks.seeking) {
               // Set playhead position only on click release, when not dragging
-              that.peaks.emit("user_seek.zoomview", that.data.time(that.frameOffset + x), that.frameOffset + x);
+              that.peaks.emit("user_seek.zoomview", startTime, startPosition);
+            } else {
+              var currentPosition = Math.min(that.frameOffset + event.evt.layerX, that.pixelLength),
+                  stopTime = that.data.time(currentPosition);
+
+              that.peaks.emit('user_drag.zoomview.end', startPosition, currentPosition, startTime, stopTime, dragId);
             }
 
             that.stage.off("mousemove mouseup");

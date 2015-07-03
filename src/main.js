@@ -140,8 +140,8 @@ define('peaks', [
       /**
        * Related to points
        */
-      pointMarkerColor:     '#FF0000', //Color for the point marker
-      pointDblClickHandler: null, //Handler called when point handle double clicked.
+      pointMarkerColor:     '#FF0000', // Color for the point marker
+      pointDblClickHandler: null, // Handler called when point handle double clicked.
       pointDragEndHandler:  null, // Called when the point handle has finished dragging
 
       /**
@@ -160,6 +160,11 @@ define('peaks', [
        * Use animation on zoom
        */
       zoomAdapter: 'animated',
+
+      /**
+       * Move the zoomview when dragging. Defaults to true.
+       */
+      moveZoomWaveOnDrag: true
     };
 
     /**

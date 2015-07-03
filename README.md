@@ -209,6 +209,9 @@ var options = {
   // Zoom view adapter to use. Valid adapters are: 'animated' (default) and 'static'
   zoomAdapter: 'animated',
 
+  // Move the zoomview when dragging. Defaults to true.
+  moveZoomWaveOnDrag: true
+
   // Array of initial segment objects with startTime and
   // endTime in seconds and a boolean for editable.
   // See below.
