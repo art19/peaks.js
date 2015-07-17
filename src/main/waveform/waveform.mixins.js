@@ -31,6 +31,11 @@ define(['konva'], function (Konva) {
       var handleY = (height / 2) - 10.5;
       var handleX = inMarker ? -handleWidth + 0.5 : 0.5;
 
+      // If no color is provided for the marker, fall back to the segment's color
+      if (color === undefined) {
+        color = parent.color;
+      }
+
       var group = new Konva.Group({
         draggable: draggable,
         dragBoundFunc: function(pos) {
@@ -129,6 +134,11 @@ define(['konva'], function (Konva) {
           var handleWidth = 10;
           var handleHeight = 20;
           var handleX = 0.5; //Place in the middle of the marker
+
+          // If no color is provided for the marker, fall back to the point's color
+          if (color === undefined) {
+            color = parent.color;
+          }
 
           var group = new Konva.Group({
               draggable: draggable,
