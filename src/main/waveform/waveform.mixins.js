@@ -88,7 +88,7 @@ define(['konva'], function (Konva) {
        */
       var line = new Konva.Line({
         points: [0.5, 0, 0.5, height],
-        strokeWidth: 1,
+        strokeWidth: parent.strokeWidth || 1,
         stroke: color,
         x: 0,
         y: 0
@@ -197,7 +197,7 @@ define(['konva'], function (Konva) {
           var line = new Konva.Line({
             points: [0, 0, 0, height],
             stroke: color,
-            strokeWidth: 1,
+            strokeWidth: parent.strokeWidth || 1,
             x: handleX,
             y: 0
           });
