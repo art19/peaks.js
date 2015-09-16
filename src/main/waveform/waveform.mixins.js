@@ -35,7 +35,9 @@ define(['konva'], function (Konva) {
 
       // If no color is provided for the marker, fall back to the segment's color
       if (color === undefined) {
-        color = parent.color;
+        useColor = parent.color;
+      } else {
+        useColor = color;
       }
 
       var group = new Konva.Group({
@@ -92,8 +94,8 @@ define(['konva'], function (Konva) {
       var handle = new Konva.Rect({
         width: handleWidth,
         height: handleHeight,
-        fill: color,
-        stroke: color,
+        fill: useColor,
+        stroke: useColor,
         strokeWidth: 1,
         x: handleX,
         y: handleY
@@ -105,7 +107,7 @@ define(['konva'], function (Konva) {
       var line = new Konva.Line({
         points: [0.5, 0, 0.5, height],
         strokeWidth: parent.strokeWidth || 1,
-        stroke: color,
+        stroke: useColor,
         x: 0,
         y: 0
       });
