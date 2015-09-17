@@ -32,6 +32,7 @@ define(['konva'], function (Konva) {
       var handleWidth = handleHeight / 2;
       var handleY = (height / 2) - 10.5;
       var handleX = inMarker ? -handleWidth + 0.5 : 0.5;
+      var useColor;
 
       // If no color is provided for the marker, fall back to the segment's color
       if (color === undefined) {
