@@ -191,13 +191,13 @@ define([
      * Manages a new segment and propagates it into the different views
      *
      * @api
-     * @param {Object} segment
-     * @param {Number} segment.startTime
-     * @param {Number} segment.endTime
+     * @param {Object}  segment
+     * @param {Number}  segment.startTime
+     * @param {Number}  segment.endTime
      * @param {Boolean} segment.editable
-     * @param {String=} segment.color
-     * @param {String=} segment.labelText
-     * @param {String=} segment.id. Will be generated if undefined
+     * @param {String}  segment.color
+     * @param {String}  segment.labelText
+     * @param {String}  segment.id. Will be generated if undefined
      * @return {Object}
      */
     this.createSegment = function (segment) {
