@@ -25,16 +25,7 @@ define([
       return view;
     });
 
-    var createSegmentWaveform = function (segmentId, startTime, endTime, editable, color, labelText) {
-      var segment = {
-        id: segmentId,
-        startTime: startTime,
-        endTime: endTime,
-        labelText: labelText || "",
-        color: color || getSegmentColor(),
-        editable: editable
-      };
-
+    var createSegmentWaveform = function (segment) {
       var segmentZoomGroup = new Konva.Group();
       var segmentOverviewGroup = new Konva.Group();
 
@@ -64,9 +55,9 @@ define([
         segmentGroup.label = new peaks.options.segmentLabelDraw(segmentGroup, segment);
         segmentGroup.add(segmentGroup.label.hide());
 
-        if (editable) {
-          segmentGroup.inMarker = new peaks.options.segmentInMarker(editable, segmentGroup, segment, segmentHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
-          segmentGroup.outMarker = new peaks.options.segmentOutMarker(editable, segmentGroup, segment, segmentHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
+        if (segment.editable) {
+          segmentGroup.inMarker = new peaks.options.segmentInMarker(true, segmentGroup, segment, segmentHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
+          segmentGroup.outMarker = new peaks.options.segmentOutMarker(true, segmentGroup, segment, segmentHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
 
           segmentGroup.add(segmentGroup.inMarker);
           segmentGroup.add(segmentGroup.outMarker);
@@ -197,46 +188,54 @@ define([
     };
 
     /**
-     * Manage a new segment and propagates it into the different views
+     * Manages a new segment and propagates it into the different views
      *
      * @api
-     * @param {Number} startTime
-     * @param {Number} endTime
-     * @param {Boolean} editable
-     * @param {String=} color
-     * @param {String=} labelText
-     * @param {String=} segment ID. Will be generated if undefined
+     * @param {Object}  segment
+     * @param {Number}  segment.startTime
+     * @param {Number}  segment.endTime
+     * @param {Boolean} segment.editable
+     * @param {String}  segment.color
+     * @param {String}  segment.labelText
+     * @param {String}  segment.id. Will be generated if undefined
      * @return {Object}
      */
-    this.createSegment = function (startTime, endTime, editable, color, labelText, segmentId) {
-      if (segmentId === undefined) {
-        segmentId = "segment" + self.segments.length;
+    this.createSegment = function (segment) {
+      if (segment.id === undefined) {
+        segment.id = "segment" + self.segments.length;
       }
 
-      if ((startTime >= 0) === false){
+      if ((segment.startTime >= 0) === false){
         throw new TypeError("[waveform.segments.createSegment] startTime should be a positive value");
       }
 
-      if ((endTime > 0) === false){
+      if ((segment.endTime > 0) === false){
         throw new TypeError("[waveform.segments.createSegment] endTime should be a positive value");
       }
 
-      if ((endTime > startTime) === false){
+      if ((segment.endTime > segment.startTime) === false){
         throw new RangeError("[waveform.segments.createSegment] endTime should be higher than startTime");
       }
 
       if (self.segments.some(function(item, index, arr) {
-        return (item.id === segmentId);
+        return (item.id === segment.segmentId);
       })) {
         throw new TypeError("[waveform.segments.createSegment] segmentId is already in use");
       }
 
-      var segment = createSegmentWaveform(segmentId, startTime, endTime, editable, color, labelText);
+      if (segment.color === undefined) {
+        segment.color = getSegmentColor();
+      }
+      if (segment.labelText === undefined) {
+        segment.labelText = '';
+      }
 
-      updateSegmentWaveform(segment);
-      self.segments.push(segment);
+      var newSegment = createSegmentWaveform(segment);
 
-      return segment;
+      updateSegmentWaveform(newSegment);
+      self.segments.push(newSegment);
+
+      return newSegment;
     };
 
     this.remove = function removeSegment(segment){

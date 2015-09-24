@@ -353,10 +353,7 @@ define('peaks', [
           }
 
           if (Array.isArray(segments)) {
-            segments.forEach(function (segment) {
-              self.waveform.segments.createSegment(segment.startTime, segment.endTime, segment.editable, segment.color, segment.labelText, segment.id);
-            });
-
+            segments.forEach(self.waveform.segments.createSegment.bind(self.waveform.segments));
             self.waveform.segments.render();
           }
           else {
