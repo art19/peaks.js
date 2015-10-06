@@ -32,17 +32,21 @@ define([
       var segmentGroups = [{ group: segmentZoomGroup, view: 'zoomview' }, { group: segmentOverviewGroup, view: 'overview' }];
 
       var menter = function (event) {
-        if (this.parent && this.parent.label)
+        if (this.parent && this.parent.label) {
           this.parent.label.show();
-        if (this.parent && this.parent.view)
+        }
+        if (this.parent && this.parent.view && this.parent.view.segmentLayer) {
           this.parent.view.segmentLayer.draw();
+        }
       };
 
       var mleave = function (event) {
-        if (this.parent && this.parent.label)
+        if (this.parent && this.parent.label) {
           this.parent.label.hide();
-        if (this.parent && this.parent.view)
+        }
+        if (this.parent && this.parent.view && this.parent.view.segmentLayer) {
           this.parent.view.segmentLayer.draw();
+        }
       };
 
       segmentGroups.forEach(function(item, i){
