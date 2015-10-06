@@ -32,13 +32,21 @@ define([
       var segmentGroups = [{ group: segmentZoomGroup, view: 'zoomview' }, { group: segmentOverviewGroup, view: 'overview' }];
 
       var menter = function (event) {
-        this.parent.label.show();
-        this.parent.view.segmentLayer.draw();
+        if (this.parent && this.parent.label) {
+          this.parent.label.show();
+        }
+        if (this.parent && this.parent.view && this.parent.view.segmentLayer) {
+          this.parent.view.segmentLayer.draw();
+        }
       };
 
       var mleave = function (event) {
-        this.parent.label.hide();
-        this.parent.view.segmentLayer.draw();
+        if (this.parent && this.parent.label) {
+          this.parent.label.hide();
+        }
+        if (this.parent && this.parent.view && this.parent.view.segmentLayer) {
+          this.parent.view.segmentLayer.draw();
+        }
       };
 
       segmentGroups.forEach(function(item, i){
@@ -144,14 +152,24 @@ define([
     };
 
     var segmentHandleDrag = function (thisSeg, segment) {
+      var newInTime, newOutTime, inOffset, outOffset;
+
       if (thisSeg.inMarker.getX() > 0) {
-        var inOffset = thisSeg.view.frameOffset + thisSeg.inMarker.getX() + thisSeg.inMarker.getWidth();
-        segment.startTime = thisSeg.view.data.time(inOffset);
+        inOffset = thisSeg.view.frameOffset + thisSeg.inMarker.getX() + thisSeg.inMarker.getWidth();
+        newInTime = thisSeg.view.data.time(inOffset);
+        if (segment.leftBound && !isNaN(segment.leftBound)) {
+          newInTime = Math.max(segment.leftBound, newInTime);
+        }
+        segment.startTime = newInTime;
       }
 
       if (thisSeg.outMarker.getX() < thisSeg.view.width) {
-        var outOffset = thisSeg.view.frameOffset + thisSeg.outMarker.getX();
-        segment.endTime = thisSeg.view.data.time(outOffset);
+        outOffset = thisSeg.view.frameOffset + thisSeg.outMarker.getX();
+        newOutTime = thisSeg.view.data.time(outOffset);
+        if (segment.rightBound && !isNaN(segment.rightBound)) {
+          newOutTime = Math.min(segment.rightBound, newOutTime);
+        }
+        segment.endTime = newOutTime;
       }
 
       updateSegmentWaveform(segment);
