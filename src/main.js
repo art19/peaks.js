@@ -388,7 +388,9 @@ define('peaks', [
            * Update all segments and refresh the waveforms.
            */
           updateSegments: function() {
-            self.waveform.segments.updateSegments();
+            if (self.waveform && self.waveform.segments) {
+              self.waveform.segments.updateSegments();
+            }
           },
 
           /**
@@ -439,7 +441,9 @@ define('peaks', [
            * Remove all segments
            */
           removeAll: function () {
-            self.waveform.segments.removeAll();
+            if (self.waveform && self.waveform.segments) {
+              self.waveform.segments.removeAll();
+            }
           },
 
           /**
@@ -529,7 +533,9 @@ define('peaks', [
            * @since 0.3.2
            */
           removeAll: function removeAll(){
-            self.waveform.points.removeAll();
+            if (self.waveform && self.waveform.points) {
+              self.waveform.points.removeAll();
+            }
           }
         };
       }
