@@ -65,6 +65,12 @@ define([
       var overviewtimestampOffset = waveformView.waveformOverview.data.at_time(point.timestamp);
 
       if (point.overview.marker) {
+        if (overviewtimestampOffset < 1) {
+          overviewtimestampOffset = 1;
+        } else if (overviewtimestampOffset >= point.overview.view.width - 2) {
+          overviewtimestampOffset -= 1;
+        }
+
         point.overview.marker.show().setX(overviewtimestampOffset - point.overview.marker.getWidth());
         // Change Text
         point.overview.marker.label.setText(mixins.niceTime(point.timestamp, false));
@@ -84,6 +90,11 @@ define([
         point.zoom.show();
 
         if (point.zoom.marker) {
+          if (startPixel < 1) {
+            startPixel = 1;
+          } else if (startPixel >= point.zoom.view.width - 2) {
+            startPixel -= 1;
+          }
           point.zoom.marker.show().setX(startPixel - point.zoom.marker.getWidth());
           // Change Text
           point.zoom.marker.label.setText(mixins.niceTime(point.timestamp, false));
@@ -95,7 +106,7 @@ define([
     }
 
     function pointHandleDrag(thisPoint, point) {
-      if (thisPoint.marker.getX() > 0) {
+      if (thisPoint.marker.getX() >= 0) {
         var inOffset = thisPoint.view.frameOffset + thisPoint.marker.getX() + thisPoint.marker.getWidth();
         point.timestamp = thisPoint.view.data.time(inOffset);
       }
