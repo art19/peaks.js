@@ -56,13 +56,13 @@ define([
     });
 
     that.zoomWaveformLayer.add(that.background);
+    that.createZoomWaveform();
+    that.createUi();
 
     if (that.peaks.options.axisOnWaveforms.indexOf('zoomview') > -1) {
       that.axis = new WaveformAxis(that, { axisGridlineColor: that.peaks.options.axisGridlineColor, axisLabelColor: that.peaks.options.axisLabelColor });
     }
 
-    that.createZoomWaveform();
-    that.createUi();
 
     // INTERACTION ===============================================
 
@@ -243,6 +243,8 @@ define([
     }).add(that.zoomPlayheadLine).add(that.zoomPlayheadText);
 
     that.uiLayer.add(that.zoomPlayheadGroup);
+    that.segmentLayer = new Konva.Layer();
+    that.stage.add(that.segmentLayer);
     that.stage.add(that.uiLayer);
 
     that.zoomPlayheadGroup.moveToTop();
