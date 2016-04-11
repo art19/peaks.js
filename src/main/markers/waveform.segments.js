@@ -154,6 +154,7 @@ define([
     var segmentHandleDrag = function (thisSeg, segment) {
       var newInTime, newOutTime, inOffset, outOffset;
 
+      // Allow to end a drag on position 0 and enable a pre-roll drop
       if (thisSeg.inMarker.getX() >= 0) {
         inOffset = thisSeg.view.frameOffset + thisSeg.inMarker.getX() + thisSeg.inMarker.getWidth();
         newInTime = thisSeg.view.data.time(inOffset);
@@ -163,6 +164,7 @@ define([
         segment.startTime = newInTime;
       }
 
+      // Allow a segment to include the very last position as well
       if (thisSeg.outMarker.getX() <= thisSeg.view.width) {
         outOffset = thisSeg.view.frameOffset + thisSeg.outMarker.getX();
         newOutTime = thisSeg.view.data.time(outOffset);
