@@ -34,7 +34,7 @@ define([
     that.pixelLength = that.data.adapter.length;
     that.frameOffset = 0; // the pixel offset of the current frame being displayed
 
-    that.width = container.clientWidth;
+    that.width  = container.clientWidth;
     that.height = container.clientHeight || that.options.height;
 
     that.data.offset(that.frameOffset, that.frameOffset + that.width);
@@ -174,7 +174,6 @@ define([
         if (zoomAdapterMap[that.peaks.options.zoomAdapter] === undefined) {
           throw new Error("Invalid zoomAdapter: " + that.peaks.options.zoomAdapter);
         }
-
         adapter = zoomAdapterMap[that.peaks.options.zoomAdapter].init(current_scale, previous_scale, that);
         adapter.start();
       }
@@ -369,8 +368,10 @@ define([
 
     if (!that.data.in_offset(pixelIndex)) {
       that.frameOffset = pixelIndex - Math.round(that.width / 2);
+
       if (that.frameOffset <= 0) {
         that.frameOffset = 0;
+
       } else if (that.frameOffset + that.width >= that.data.adapter.length) {
         that.frameOffset = upperLimit;
       }
