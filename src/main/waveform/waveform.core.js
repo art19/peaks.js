@@ -156,7 +156,7 @@ define([
             var w = that.ui.player.clientWidth;
             var overviewWaveformData = that.origWaveformData.resample(w);
             peaks.emit("resizeEndOverview", w, overviewWaveformData);
-            peaks.emit("window_resized", w, overviewWaveformData);
+            peaks.emit("window_resized", w, that.origWaveformData);
           }, 500);
         });
 
