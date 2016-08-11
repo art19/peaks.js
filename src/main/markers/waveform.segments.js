@@ -64,8 +64,8 @@ define([
         segmentGroup.add(segmentGroup.label.hide());
 
         if (segment.editable) {
-          segmentGroup.inMarker = new peaks.options.segmentInMarker(true, segmentGroup, segment, segmentHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
-          segmentGroup.outMarker = new peaks.options.segmentOutMarker(true, segmentGroup, segment, segmentHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
+          segmentGroup.inMarker = new peaks.options.segmentInMarker(true, segmentGroup, segment, segmentInHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
+          segmentGroup.outMarker = new peaks.options.segmentOutMarker(true, segmentGroup, segment, segmentOutHandleDrag, peaks.options.segmentDblClickHandler, peaks.options.segmentDragEndHandler);
 
           segmentGroup.add(segmentGroup.inMarker);
           segmentGroup.add(segmentGroup.outMarker);
@@ -151,8 +151,8 @@ define([
       }
     };
 
-    var segmentHandleDrag = function (thisSeg, segment) {
-      var newInTime, newOutTime, inOffset, outOffset;
+    var segmentInHandleDrag = function (thisSeg, segment) {
+      var newInTime, inOffset;
 
       // Allow to end a drag on position 0 and enable a pre-roll drop
       if (thisSeg.inMarker.getX() >= 0) {
@@ -163,6 +163,13 @@ define([
         }
         segment.startTime = newInTime;
       }
+
+      updateSegmentWaveform(segment);
+      this.render();
+    }.bind(this);
+
+    var segmentOutHandleDrag = function (thisSeg, segment) {
+      var newOutTime, outOffset;
 
       // Allow a segment to include the very last position as well
       if (thisSeg.outMarker.getX() <= thisSeg.view.width) {
