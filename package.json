@@ -68,7 +68,7 @@
   "dependencies": {
     "eventemitter2": "^0.4.14",
     "konva": "~0.9.5",
-    "waveform-data": "^1.5.1"
+    "waveform-data": "git@github.com:art19/waveform-data.js.git#art19-patched"
   },
   "optionalDependencies": {
     "browserify": "^5.12.0",

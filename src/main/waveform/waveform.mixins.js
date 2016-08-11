@@ -29,9 +29,9 @@ define(['konva'], function (Konva) {
      */
     return function (draggable, segment, parent, onDrag, onDblClick, onDragEnd) {
       var handleHeight = 20;
-      var handleWidth = handleHeight / 2;
+      var handleWidth = 12;
       var handleY = (height / 2) - 10.5;
-      var handleX = inMarker ? -handleWidth + 0.5 : 0.5;
+      var handleX = 0.5;
       var useColor;
 
       // If no color is provided for the marker, fall back to the segment's color
@@ -40,6 +40,8 @@ define(['konva'], function (Konva) {
       } else {
         useColor = color;
       }
+
+      var xPosition = inMarker ? -16 : 16;
 
       var group = new Konva.Group({
         draggable: draggable,
@@ -61,6 +63,13 @@ define(['konva'], function (Konva) {
           };
         }
       }).on("dragmove", function (event) {
+        if (group.getAbsolutePosition().x > segment.view.width / 2) {
+          text.setX(-16 - text.getWidth()); // Position text to the left of the mark
+        } else {
+          text.setX(16);                    // Position text to the right of the mark
+        }
+        text.show();
+
         if (typeof(onDrag) === 'function') {
           onDrag(segment, parent);
         }
@@ -78,8 +87,6 @@ define(['konva'], function (Konva) {
         });
       }
 
-      var xPosition = inMarker ? -24 : 24;
-
       var text = new Konva.Text({
         x: xPosition,
         y: (height / 2) - 5,
@@ -92,13 +99,24 @@ define(['konva'], function (Konva) {
       text.hide();
       group.label = text;
 
-      var handle = new Konva.Rect({
+      var baseHandle = new Konva.Rect({
+        cornerRadius: 2,
         width: handleWidth,
         height: handleHeight,
         fill: useColor,
-        stroke: useColor,
+        x: handleX - handleWidth / 2,
+        y: handleY
+      });
+
+      var handle = new Konva.Rect({
+        cornerRadius: 2,
+        width: handleWidth,
+        height: handleHeight,
+        fill: '#000000',
+        stroke: '#000000',
         strokeWidth: 1,
-        x: handleX,
+        opacity: 0.3,
+        x: handleX - handleWidth / 2,
         y: handleY
       });
 
@@ -106,19 +124,24 @@ define(['konva'], function (Konva) {
       Vertical Line
        */
       var line = new Konva.Line({
-        points: [0.5, 0, 0.5, height],
+        points: [0, 0, 0, height],
         strokeWidth: parent.strokeWidth || 1,
         stroke: useColor,
         x: 0,
         y: 0
       });
+      group.add(line);
 
       /*
       Events
        */
       if (draggable) {
         handle.on("mouseover", function (event) {
-          if (inMarker) text.setX(xPosition - text.getWidth());
+          if (group.getAbsolutePosition().x > segment.view.width / 2) {
+            text.setX(-16 - text.getWidth()); // Position text to the left of the mark
+          } else {
+            text.setX(16);                    // Position text to the right of the mark
+          }
           text.show();
           segment.view.segmentLayer.draw();
         });
@@ -127,11 +150,11 @@ define(['konva'], function (Konva) {
           segment.view.segmentLayer.draw();
         });
 
+        group.add(baseHandle);
         group.add(handle);
       }
 
       group.add(text);
-      group.add(line);
 
       return group;
     };
@@ -155,7 +178,7 @@ define(['konva'], function (Konva) {
        */
       return function (draggable, point, parent, onDrag, onDblClick, onDragEnd) {
           var handleTop = (height / 2) - 10.5;
-          var handleWidth = 10;
+          var handleWidth = 12;
           var handleHeight = 20;
           var handleX = 0.5; //Place in the middle of the marker
 
@@ -167,13 +190,28 @@ define(['konva'], function (Konva) {
           var group = new Konva.Group({
               draggable: draggable,
               dragBoundFunc: function(pos) {
+                  limit = pos.x;
 
+                  if (limit < 0) {
+                    limit = 0;
+                  }
+                  if (limit > point.view.width) {
+                    limit = point.view.width;
+                  }
                   return {
-                      x: pos.x, //No constraint hoziontally
+                      x: limit,
                       y: this.getAbsolutePosition().y //Constrained vertical line
                   };
               }
           }).on("dragmove", function (event) {
+                  var absX = group.getAbsolutePosition().x
+                  if (absX > point.view.width / 2) {
+                    text.setX(xPosition - text.getWidth()); // Position text to the left of the mark
+                  } else {
+                    text.setX(-1 * xPosition); // Position text to the right of the mark
+                  }
+                  text.show();
+
                   if (typeof(onDrag) === 'function') {
                     onDrag(point, parent);
                   }
@@ -213,11 +251,24 @@ define(['konva'], function (Konva) {
           /*
           Handle
            */
-          var handle = new Konva.Rect({
+          var baseHandle = new Konva.Rect({
             width: handleWidth,
             height: handleHeight,
+            cornerRadius: 2,
             fill: color,
-            x: handleX,
+            x: handleX - (handleWidth / 2),
+            y: handleTop
+          });
+
+          var handle = new Konva.Rect({
+            cornerRadius: 2,
+            width: handleWidth,
+            height: handleHeight,
+            fill: '#000000',
+            strokeColor: '#000000',
+            strokeWidth: 1,
+            opacity: 0.3,
+            x: handleX - (handleWidth / 2),
             y: handleTop
           });
 
@@ -232,13 +283,21 @@ define(['konva'], function (Konva) {
             y: 0
           });
 
+          // Make sure we have line and text below the drag-handle
+          group.add(line);
+          group.add(text);
+
           /*
           Events
            */
           if (draggable) {
             handle.on("mouseover", function (event) {
               text.show();
-              text.setX(xPosition - text.getWidth()); //Position text to the left of the mark
+              if (group.getAbsolutePosition().x > point.view.width / 2) {
+                text.setX(xPosition - text.getWidth()); //Position text to the left of the mark
+              } else {
+                text.setX(-1 * xPosition); //Position text to the left of the mark
+              }
               point.view.pointLayer.draw();
             });
             handle.on("mouseout", function (event) {
@@ -246,13 +305,11 @@ define(['konva'], function (Konva) {
               point.view.pointLayer.draw();
             });
 
+            group.add(baseHandle);
             group.add(handle);
           }
-          group.add(line);
-          group.add(text);
 
           return group;
-
       };
   }
 
