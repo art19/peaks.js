@@ -370,10 +370,10 @@ define(['konva'], function (Konva) {
   /**
    * Returns a zero padded string for the given number
    *
-   * @param {Number} number to be padded
-   * @param {Number} length of the final string
-   * @param {Boolean} if true or omitted, the number will be left-padded
-   * @returns {String}
+   * @param {Number} number Number to be padded
+   * @param {Number} length Length of the final string
+   * @param {Boolean} prepend If true or omitted, the number will be left-padded
+   * @returns {String} the padded number
    */
   function padNumber(number, length, prepend) {
     var zeros;
