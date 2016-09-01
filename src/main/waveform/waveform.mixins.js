@@ -14,9 +14,10 @@ define(['konva'], function (Konva) {
    * @param  {int}      height    Height of handle group container (canvas)
    * @param  {string}   color     Colour hex value for handle and line marker
    * @param  {Boolean}  inMarker  Is this marker the inMarker (LHS) or outMarker (RHS)
+   * @param  {Boolean}  hideLabel If true, do now show the timecode label next to the handle
    * @return {Function}
    */
-  var createHandle = function (height, color, inMarker) {
+  var createHandle = function (height, color, inMarker, hideLabel) {
 
     /**
      * @param  {Boolean}  draggable  If true, marker is draggable
@@ -63,12 +64,16 @@ define(['konva'], function (Konva) {
           };
         }
       }).on("dragmove", function (event) {
-        if (group.getAbsolutePosition().x > segment.view.width / 2) {
-          text.setX(-16 - text.getWidth()); // Position text to the left of the mark
+        if (hideLabel) {
+          text.hide();
         } else {
-          text.setX(16);                    // Position text to the right of the mark
+          if (group.getAbsolutePosition().x > segment.view.width / 2) {
+            text.setX(-16 - text.getWidth()); // Position text to the left of the mark
+          } else {
+            text.setX(16);                    // Position text to the right of the mark
+          }
+          text.show();
         }
-        text.show();
 
         if (typeof(onDrag) === 'function') {
           onDrag(segment, parent);
@@ -137,13 +142,17 @@ define(['konva'], function (Konva) {
        */
       if (draggable) {
         handle.on("mouseover", function (event) {
-          if (group.getAbsolutePosition().x > segment.view.width / 2) {
-            text.setX(-16 - text.getWidth()); // Position text to the left of the mark
+          if (hideLabel) {
+            text.hide()
           } else {
-            text.setX(16);                    // Position text to the right of the mark
+            if (group.getAbsolutePosition().x > segment.view.width / 2) {
+              text.setX(-16 - text.getWidth()); // Position text to the left of the mark
+            } else {
+              text.setX(16);                    // Position text to the right of the mark
+            }
+            text.show();
+            segment.view.segmentLayer.draw();
           }
-          text.show();
-          segment.view.segmentLayer.draw();
         });
         handle.on("mouseout", function (event) {
           text.hide();
@@ -164,9 +173,10 @@ define(['konva'], function (Konva) {
    * Create a point handle group in Konva based on given options.
    * @param  {int}      height    Height of handle group container (canvas)
    * @param  {string}   color     Colour hex value for handle and line marker
+   * @param  {Boolean}  hideLabel If true, do now show the timecode label next to the handle
    * @return {Function}
    */
-  function createPointHandle(height, color) {
+  function createPointHandle(height, color, hideLabel) {
       /**
        * @param  {Boolean}  draggable  If true, marker is draggable
        * @param  {Object}   point      Parent point object with in times
@@ -204,13 +214,17 @@ define(['konva'], function (Konva) {
                   };
               }
           }).on("dragmove", function (event) {
-                  var absX = group.getAbsolutePosition().x
-                  if (absX > point.view.width / 2) {
-                    text.setX(xPosition - text.getWidth()); // Position text to the left of the mark
+                  if (hideLabel) {
+                    text.hide();
                   } else {
-                    text.setX(-1 * xPosition); // Position text to the right of the mark
+                    var absX = group.getAbsolutePosition().x
+                    if (absX > point.view.width / 2) {
+                      text.setX(xPosition - text.getWidth()); // Position text to the left of the mark
+                    } else {
+                      text.setX(-1 * xPosition); // Position text to the right of the mark
+                    }
+                    text.show();
                   }
-                  text.show();
 
                   if (typeof(onDrag) === 'function') {
                     onDrag(point, parent);
@@ -292,13 +306,17 @@ define(['konva'], function (Konva) {
            */
           if (draggable) {
             handle.on("mouseover", function (event) {
-              text.show();
-              if (group.getAbsolutePosition().x > point.view.width / 2) {
-                text.setX(xPosition - text.getWidth()); //Position text to the left of the mark
+              if (hideLabel) {
+                text.hide();
               } else {
-                text.setX(-1 * xPosition); //Position text to the left of the mark
+                text.show();
+                if (group.getAbsolutePosition().x > point.view.width / 2) {
+                  text.setX(xPosition - text.getWidth()); //Position text to the left of the mark
+                } else {
+                  text.setX(-1 * xPosition); //Position text to the left of the mark
+                }
+                point.view.pointLayer.draw();
               }
-              point.view.pointLayer.draw();
             });
             handle.on("mouseout", function (event) {
               text.hide();
@@ -349,6 +367,37 @@ define(['konva'], function (Konva) {
     };
   }
 
+  /**
+   * Returns a zero padded string for the given number
+   *
+   * @param {Number} number to be padded
+   * @param {Number} length of the final string
+   * @param {Boolean} if true or omitted, the number will be left-padded
+   * @returns {String}
+   */
+  function padNumber(number, length, prepend) {
+    var zeros;
+
+    if (typeof(prepend) === 'undefined')
+      prepend = true;
+
+    number = number.toString()
+
+    if (number.length < length) {
+      zeros = "";
+      while ((zeros.length + number.length) < length) {
+        zeros = zeros.concat("0")
+      }
+      if (prepend) {
+        return zeros.toString() + number.toString();
+      } else {
+        return number.toString() + zeros.toString();
+      }
+    } else {
+      return number
+    }
+  }
+
   // Public API
   return {
 
@@ -382,34 +431,35 @@ define(['konva'], function (Konva) {
      * @return {String}   Formatted time string
      */
     niceTime: function (time, dropHundredths) {
-      var hundredths, seconds, minutes, hours, result = [];
+      var hundredths, dcSep, parts, decimals, locale, roundedTime, seconds, minutes, hours, result = [];
 
-      hundredths = Math.floor((time % 1) * 100);
-      seconds = Math.floor(time);
+      decimals = dropHundredths ? 0 : 2
+      roundedTime = Number(Math.round(Number(time)+'e+' + decimals)+'e-' + decimals);
+
+      locale = roundedTime.toLocaleString()
+      dcSep = 0.1.toLocaleString().replace(/\d/g, '')
+
+      parts = locale.split(dcSep)
+      if (parts.length > 1) {
+        hundredths = parts.pop()
+        if (hundredths.length < 2)
+          hundredths = padNumber(hundredths, 2, false);
+      } else {
+        hundredths = '00'
+      }
+
+      seconds = Math.floor(roundedTime);
       minutes = Math.floor(seconds / 60);
       hours = Math.floor(minutes / 60);
 
-      if (hours>0) result.push(hours); // Hours
-      result.push(minutes % 60); // Mins
-      result.push(seconds % 60); // Seconds
-
-      for (var i = 0; i < result.length; i++) {
-        var x = result[i];
-        if (x < 10) {
-          result[i] = "0" + x;
-        } else {
-          result[i] = x;
-        }
-      }
+      if (hours>0) result.push(padNumber(hours, 2)); // Hours
+      result.push(padNumber(minutes % 60, 2));       // Mins
+      result.push(padNumber(seconds % 60, 2));       // Seconds
 
       result = result.join(":");
 
-      if (!dropHundredths) {
-        if (hundredths < 10) {
-          hundredths = "0" + hundredths;
-        }
-
-        result += "." + hundredths; // Hundredths of a second
+      if (! dropHundredths) {
+        result += '.' + hundredths; // Hundredths of a second
       }
 
       return result;
@@ -422,7 +472,7 @@ define(['konva'], function (Konva) {
      * @return {Function} Provides Konva handle group on execution
      */
     defaultInMarker: function (options) {
-      return createHandle(options.height, options.inMarkerColor, true);
+      return createHandle(options.height, options.inMarkerColor, true, options.hideMarkerTimecodeLabels);
     },
 
     /**
@@ -432,11 +482,11 @@ define(['konva'], function (Konva) {
      * @return {Function} Provides Konva handle group on execution
      */
     defaultOutMarker: function (options) {
-      return createHandle(options.height, options.outMarkerColor, false);
+      return createHandle(options.height, options.outMarkerColor, false, options.hideMarkerTimecodeLabels);
     },
 
     defaultPointMarker: function (options) {
-      return createPointHandle(options.height, options.pointMarkerColor);
+      return createPointHandle(options.height, options.pointMarkerColor, options.hideMarkerTimecodeLabels);
     },
 
     defaultSegmentLabelDraw: function (options) {

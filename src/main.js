@@ -140,6 +140,14 @@ define('peaks', [
        */
       playheadTextColor:     '#aaa',
       /**
+       * Hide the playhead label (timecode)
+       */
+      hidePlayheadLabel:     false,
+      /**
+       * Hide the timecode labels on markers
+       */
+      hideMarkerTimecodeLabels: false,
+      /**
        * Colour of the axis gridlines
       */
       axisGridlineColor:     '#ccc',

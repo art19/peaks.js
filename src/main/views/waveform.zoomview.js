@@ -241,6 +241,10 @@ define([
       y: 0
     }).add(that.zoomPlayheadLine).add(that.zoomPlayheadText);
 
+    if (that.options.hidePlayheadLabel) {
+      that.zoomPlayheadText.hide();
+    }
+
     that.uiLayer.add(that.zoomPlayheadGroup);
     that.segmentLayer = new Konva.Layer();
     that.stage.add(that.segmentLayer);
