@@ -233,6 +233,13 @@ define('peaks', [
      * @type {Function}
      */
     this.logger = console.error.bind(console);
+
+    /**
+     * Destroy anything that needs to be destoryed
+     */
+    this.destroy = function() {
+      this.waveform.destroy();
+    }
   }
 
   Peaks.init = function init (opts) {
