@@ -147,8 +147,8 @@ define([
       bindResize: function () {
         var that = this;
 
-        that.resizeListener = that.onResize.bind(that);
-        window.addEventListener("resize", that.resizeListener);
+        that._resizeListener = that.onResize.bind(that);
+        window.addEventListener("resize", that._resizeListener);
 
         peaks.on("overview_resized", function () {
           that.ui.overview.removeAttribute('hidden');
@@ -189,7 +189,9 @@ define([
        * Destroy the even listener
        */
       destroy: function() {
-        window.removeEventListener("resize", this.resizeListener);
+        if (this._resizeListener) {
+          window.removeEventListener("resize", this._resizeListener);
+        }
       }
     };
   };

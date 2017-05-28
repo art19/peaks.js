@@ -238,7 +238,9 @@ define('peaks', [
      * Destroy anything that needs to be destoryed
      */
     this.destroy = function() {
-      this.waveform.destroy();
+      if (typeof this.waveform === 'object') {
+        this.waveform.destroy();
+      }
     }
   }
 
