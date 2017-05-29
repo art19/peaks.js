@@ -233,6 +233,17 @@ define('peaks', [
      * @type {Function}
      */
     this.logger = console.error.bind(console);
+
+    /**
+     * Destroy anything that needs to be destoryed
+     */
+    this.destroy = function() {
+      if (typeof this.waveform !== 'object') {
+        throw new Error('attempted to destroy a peaks.js instance without the waveform being created');
+      }
+
+      this.waveform.destroy();
+    }
   }
 
   Peaks.init = function init (opts) {

@@ -142,23 +142,13 @@ define([
       },
 
       /**
-       * Deal with window resize event over both waveform views.
+       * Deals with binding the window resize event and other waveform views resize events.
        */
       bindResize: function () {
         var that = this;
 
-        window.addEventListener("resize", function () {
-          that.ui.overview.hidden = true;
-          that.ui.zoom.hidden = true;
-
-          if (that.resizeTimeoutId) clearTimeout(that.resizeTimeoutId);
-          that.resizeTimeoutId = setTimeout(function(){
-            var w = that.ui.player.clientWidth;
-            var overviewWaveformData = that.origWaveformData.resample(w);
-            peaks.emit("resizeEndOverview", w, overviewWaveformData);
-            peaks.emit("window_resized", w, that.origWaveformData);
-          }, 500);
-        });
+        that._resizeListener = that.onResize.bind(that);
+        window.addEventListener("resize", that._resizeListener);
 
         peaks.on("overview_resized", function () {
           that.ui.overview.removeAttribute('hidden');
@@ -175,6 +165,33 @@ define([
         peaks.on("user_scrub.*", function(time){
           peaks.player.seekBySeconds(time);
         });
+      },
+
+      /**
+       *  This is the method that is going to fire once the window is resized
+       */
+      onResize: function() {
+        var that = this;
+
+        that.ui.overview.hidden = true;
+        that.ui.zoom.hidden = true;
+
+        if (that.resizeTimeoutId) clearTimeout(that.resizeTimeoutId);
+        that.resizeTimeoutId = setTimeout(function(){
+          var w = that.ui.player.clientWidth;
+          var overviewWaveformData = that.origWaveformData.resample(w);
+          peaks.emit("resizeEndOverview", w, overviewWaveformData);
+          peaks.emit("window_resized", w, that.origWaveformData);
+        }, 500)
+      },
+
+      /**
+       * Destroy the even listener
+       */
+      destroy: function() {
+        if (this._resizeListener) {
+          window.removeEventListener("resize", this._resizeListener);
+        }
       }
     };
   };
