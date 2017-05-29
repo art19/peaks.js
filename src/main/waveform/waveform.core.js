@@ -21,6 +21,9 @@ define([
     return {
       init: function (ui) {
         this.ui = ui; // See buildUi in main.js
+        this._resizeListener = undefined;
+        this._destroyed = false;
+
         var that = this;
 
         /**
@@ -107,6 +110,11 @@ define([
        * @param xhr {XMLHttpRequest}
        */
       handleRemoteData: function (err, remoteData, xhr) {
+        // Don't do anything if peaks has destroyed this waveform in the meantime
+        if (this._destroyed) {
+          return;
+        }
+
         if (err) {
           return peaks.emit('error', err);
         }
@@ -186,12 +194,15 @@ define([
       },
 
       /**
-       * Destroy the even listener
+       * Destroy an eventually registered resize event listener and mark the
+       * waveform as being destroyed.
        */
       destroy: function() {
         if (this._resizeListener) {
           window.removeEventListener("resize", this._resizeListener);
+          this._resizeListener = undefined;
         }
+        this._destroyed = true;
       }
     };
   };
