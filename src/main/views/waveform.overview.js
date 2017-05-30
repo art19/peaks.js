@@ -20,7 +20,7 @@ define([
     that.options = peaks.options;
     that.data = waveformData;
     that.width = container.clientWidth;
-    that.height = container.clientHeight || that.options.height;
+    that.height = that.options.overviewWaveformHeight || container.clientHeight || that.options.height;
     that.frameOffset = 0;
 
     that.stage = new Konva.Stage({
