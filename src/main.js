@@ -96,6 +96,11 @@ define('peaks', [
       overviewWaveformColor: 'rgba(0,0,0,0.2)',
 
       /**
+       * Height for the overview waveform if container does not provide it
+       */
+      overviewWaveformHeight: undefined,
+
+      /**
        * Vertical padding in pixel to add to the overview waveform highlight rectangle. Defaults to 11px
        */
       overviewHighlightRectanglePadding: 11,
