@@ -21,8 +21,9 @@ define([
     return {
       init: function (ui) {
         this.ui = ui; // See buildUi in main.js
-        this._resizeListener = undefined;
         this._destroyed = false;
+        this._resizeListener = undefined;
+        this._resizeTimeoutId = undefined;
 
         var that = this;
 
@@ -130,7 +131,6 @@ define([
           return peaks.emit('error', e);
         }
 
-
         peaks.emit("waveformOverviewReady", this.waveformOverview);
         this.bindResize();
       },
@@ -156,7 +156,7 @@ define([
         var that = this;
 
         that._resizeListener = that.onResize.bind(that);
-        window.addEventListener("resize", that._resizeListener);
+        window.addEventListener('resize', that._resizeListener);
 
         peaks.on("overview_resized", function () {
           that.ui.overview.removeAttribute('hidden');
@@ -184,8 +184,11 @@ define([
         that.ui.overview.hidden = true;
         that.ui.zoom.hidden = true;
 
-        if (that.resizeTimeoutId) clearTimeout(that.resizeTimeoutId);
-        that.resizeTimeoutId = setTimeout(function(){
+        if (that._resizeTimeoutId) {
+          clearTimeout(that._resizeTimeoutId);
+        }
+
+        that._resizeTimeoutId = setTimeout(function(){
           var w = that.ui.player.clientWidth;
           var overviewWaveformData = that.origWaveformData.resample(w);
           peaks.emit("resizeEndOverview", w, overviewWaveformData);
@@ -199,9 +202,15 @@ define([
        */
       destroy: function() {
         if (this._resizeListener) {
-          window.removeEventListener("resize", this._resizeListener);
+          window.removeEventListener('resize', this._resizeListener);
           this._resizeListener = undefined;
         }
+
+        if (this._resizeTimeoutId) {
+          clearTimeout(this._resizeTimeoutId);
+          this._resizeTimeoutId = undefined;
+        }
+
         this._destroyed = true;
       }
     };
